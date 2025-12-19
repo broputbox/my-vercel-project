@@ -57,6 +57,15 @@ const LeadsEnhanced = () => {
   const [webhookUrl, setWebhookUrl] = useState('');
   const [copiedWebhook, setCopiedWebhook] = useState(false);
 
+<a 
+  href="https://buy.stripe.com/test_14AfZg9gffZUeP33JqaR200" 
+  target="_blank" 
+  rel="noopener noreferrer"
+  className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition"
+>
+  Start £200/mo Plan
+</a>
+  
   useEffect(() => {
     fetchLeads();
     fetchWebhookUrl()
