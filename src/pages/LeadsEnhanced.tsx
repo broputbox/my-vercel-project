@@ -63,34 +63,34 @@ const LeadsEnhanced = () => {
     ;
   }, []);
   useEffect(() => {
-    const channel = supabase
-      .channel('leads-realtime')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'leads'
-        },
-        (payload) => {
-          console.log('New lead live:', payload.new);
-          setLeads((currentLeads) => [payload.new as Lead, ...currentLeads]);
-        }
-      )
-      .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          console.log('Realtime subscribed successfully');
-        } else if (status === 'CLOSED') {
-          console.log('Realtime closed');
-        } else if (status === 'CHANNEL_ERROR') {
-          console.log('Realtime error');
-        }
-      });
+  const channel = supabase
+    .channel('leads-realtime')
+    .on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'leads'
+      },
+      (payload) => {
+        console.log('New lead live:', payload.new);
+        setLeads((currentLeads) => [payload.new as Lead, ...currentLeads]); // adds to top
+      }
+    )
+    .subscribe((status) => {
+      if (status === 'SUBSCRIBED') {
+        console.log('Realtime subscribed successfully');
+      } else if (status === 'CLOSED') {
+        console.log('Realtime closed');
+      } else if (status === 'CHANNEL_ERROR') {
+        console.log('Realtime error');
+      }
+    });
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}, []);
   
   const fetchWebhookUrl = async () => {
     const { data: { user } } = await supabase.auth.getUser();
