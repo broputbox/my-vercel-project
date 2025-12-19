@@ -68,7 +68,8 @@ const LeadsEnhanced = () => {
   
   useEffect(() => {
     fetchLeads();
-    fetchWebhookUrl();
+    fetchWebhookUrl()
+      ;
   }, []);
   useEffect(() => {
   const channel = supabase
@@ -82,7 +83,7 @@ const LeadsEnhanced = () => {
       },
       (payload) => {
         console.log('New lead live:', payload.new);
-        setLeads((currentLeads) => [payload.new as Lead, ...currentLeads]); // adds to top
+        setLeads((currentLeads) => [payload.new as Lead, ...currentLeads]);
       }
     )
     .subscribe((status) => {
@@ -99,7 +100,7 @@ const LeadsEnhanced = () => {
     supabase.removeChannel(channel);
   };
 }, []);
-  
+
   const fetchWebhookUrl = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
