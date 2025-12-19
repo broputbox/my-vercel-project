@@ -68,8 +68,7 @@ const LeadsEnhanced = () => {
   
   useEffect(() => {
     fetchLeads();
-    fetchWebhookUrl()
-    ;
+    fetchWebhookUrl();
   }, []);
   useEffect(() => {
   const channel = supabase
