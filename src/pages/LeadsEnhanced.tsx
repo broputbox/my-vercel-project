@@ -221,6 +221,15 @@ const LeadsEnhanced = () => {
           <div>
             <h1 className="text-3xl font-display font-bold text-foreground mb-2">Leads</h1>
             <p className="text-muted-foreground">Manage and track all your incoming leads</p>
+            <a
+  href="https://buy.stripe.com/test_14AfZg9gffZUeP33JqaR200"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition mt-4"
+>
+  Start £200/mo Plan
+</a>
+
           </div>
           <button onClick={exportToCSV} className="btn-secondary flex items-center gap-2">
             <Download className="w-5 h-5" />
