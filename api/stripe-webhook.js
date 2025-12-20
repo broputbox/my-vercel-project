@@ -1,35 +1,61 @@
 import Stripe from 'stripe';
+import { buffer } from 'micro';
 import { createClient } from '@supabase/supabase-js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-const supabase = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
-export default async (req, res) => {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).end('Method Not Allowed');
+  }
+
   const sig = req.headers['stripe-signature'];
-  const event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  const buf = await buffer(req);
+
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(buf, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    console.error('Webhook Error:', err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    const email = session.customer_details.email;
-    const businessName = session.metadata.businessName || 'New Client'; // add metadata in checkout
+    const email = session.customer_details?.email;
+    const businessName = session.metadata?.businessName || 'New Client';
 
-    // Create user in Supabase Auth
     const { data: user, error: authError } = await supabase.auth.admin.createUser({
       email,
       email_confirm: true,
-      password: Math.random().toString(36).slice(-8), // temp password or use magic link
+      password: Math.random().toString(36).slice(-8),
     });
 
-    if (authError) return res.status(400).json({ error: authError });
+    if (authError) {
+      console.error('Auth Error:', authError.message);
+      return res.status(400).json({ error: authError.message });
+    }
 
-    // Create client row
-    await supabase.from('clients').insert({ user_id: user.user.id, business_name: businessName });
+    const { error: insertError } = await supabase
+      .from('clients')
+      .insert({ user_id: user.id, business_name: businessName });
 
-    // Send welcome email with login link (use SendGrid or Supabase magic link)
-    // supabase.auth.signInWithOtp({ email }) for passwordless
-
-    // Optional: Send unique webhook URL
+    if (insertError) {
+      console.error('Insert Error:', insertError.message);
+      return res.status(400).json({ error: insertError.message });
+    }
   }
 
-  res.json({ received: true });
-};
+  res.status(200).json({ received: true });
+}
