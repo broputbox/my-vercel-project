@@ -1,5 +1,4 @@
 import Stripe from 'stripe';
-import { buffer } from 'micro';
 import { createClient } from '@supabase/supabase-js';
 
 export const config = {
@@ -22,7 +21,7 @@ export default async function handler(req, res) {
   }
 
   const sig = req.headers['stripe-signature'];
-  const buf = await buffer(req);
+  const buf = req.rawBody; // ⭐ FIXED
 
   let event;
 
