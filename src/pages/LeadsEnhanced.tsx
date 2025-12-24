@@ -102,7 +102,7 @@ const LeadsEnhanced = () => {
       .single();
 
     if (profile?.webhook_url) {
-      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID || 'dsgdvirakfmplmyktakz';
+      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID || 'uzrtwywocrfvkmwrknwp';
       setWebhookUrl(`https://${projectId}.supabase.co/functions/v1/webhook-leads/${profile.webhook_url}`);
     }
   };
