@@ -227,7 +227,7 @@ const LeadsEnhanced = () => {
   rel="noopener noreferrer"
   className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition mt-4"
 >
-  Start £200/mo Plan
+  Start £250/mo Plan
 </a>
 
           </div>
